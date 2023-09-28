@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Page Builder</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+        }
+        #left-section {
+            width: 30%;
+            background-color: #f0f0f0;
+            padding: 10px;
+            overflow: auto;
+        }
+        #right-section {
+            width: 70%;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .draggable {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border: 2px solid #000;
+            cursor: move;
+            position: relative;
+        }
+        .draggable p {
+            margin: 0;
+            padding: 10px;
+        }
+        .draggable img {
+            max-width: 100%;
+            max-height: 100%; 
+        }
+        .delete-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+        .style-control {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            cursor: pointer;
+        }
+        .ui-droppable img{
+        position: absolute !important;
+        height: 150px !important;
+        width: 150px !important;
+      /* left: 0 !important;
+      right: 0 !important;
+      top: 0 !important;
+      bottom: 0 !important; */
+
+        }
+    </style>
+</head>
+<body>
+    <div id="left-section">
+        <div class="draggable" id="div1">Div 1</div>
+        <div class="draggable" id="div2">Div 2</div>
+        <p class="draggable" id="paragraph1">Lorem ipsum</p>
+        <p class="draggable" id="paragraph2">Dolor sit amet</p>
+        <img class="draggable" id="image1" src="https://via.placeholder.com/150" alt="Image">
+        <img class="draggable" id="image2" src="https://via.placeholder.com/150" alt="Image">
+    </div>
+    <div id="right-section"></div>
+    <button id="save-button">Save</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize draggables
+            $(".draggable").draggable({
+                helper: "clone",
+                zIndex: 1000
+            });
+
+            // Initialize droppable area
+            $("#right-section").droppable({
+                accept: ".draggable",
+                drop: function(event, ui) {
+                    var clone = ui.helper.clone();
+                    clone.resizable();
+                    $(this).append(clone);
+                }
+            });
+
+            // Delete a div on button click
+            $("#right-section").on("click", ".delete-button", function() {
+                $(this).parent().remove();
+            });
+
+            // Prevent multiple delete buttons on hover
+            $("#right-section").on("mouseenter", ".draggable", function() {
+                $(".delete-button", this).remove();
+                $(".style-control", this).remove();
+                $(this).append("<button class='delete-button'>Delete</button>");
+                $(this).append("<button class='style-control'>Style</button>");
+            });
+
+            // Save button functionality
+            $("#save-button").click(function() {
+                var htmlContent = $("#right-section").html();
+                console.log(htmlContent);
+                // Send htmlContent to your API in the request body
+            });
+        });
+    </script>
+</body>
+</html>
